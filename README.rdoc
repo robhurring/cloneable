@@ -1,59 +1,59 @@
-# = About
-# 
-# Simple cloneable interface for ActiveRecord that allows you to call #clone! on a record and have it
-# replicate itself to another object and save itsef. supports basic association cloneing by calling
-# clone! on each association you specify using +options[:with]+
-# 
-# This was created for a specific reason (archiving some records when the tables are flushed with current data), and hasn't really been 
-# tested or built out to support a wide range of uses. This is in an early BETA state and hasn't been fully tested. 
-# Validation and association failures will _not_ roll back the clone!, this can be a huge limitation currently. (Hopefully I can get this fixed in an upcoming release)
-# 
-# Author:: Rob Hurring (rob at zerobased dot com)
-# Date:: 01/12/2010
-# Homepage:: http://blog.ubrio.us
-# Copyright:: 2010 Zerobased, LLC
-# License:: DWTFYWWI
-# 
-# === TODO
-# 
-# * add transactions and rollback when associations/objects fail to save?
-# * handle validation failures?
-# 
-# === Example
-#   
-#   # Your master records
-#   class Company
-#     has_many :employees, :dependent => :destroy
-#     # Our Archive::Company has a +company_name+ attribute, while we are using a +name+ attribute. We also don't want to include
-#     # our +bank_details+ in the archive.
-#     cloneable :to => ::Archive::Company, :map => {:name => :company_name}, :exclude => [:bank_details], :with => :employees
-#     
-#     # After we remove a company, archive it along with all the employees
-#     after_destroy :clone!
-#   end
-# 
-#   class Employee
-#     belongs_to :company
-#     cloneable :to => ::Archive::Employee, :include => [:calculated_worth], :map => {:full_name => :name}
-# 
-#     # some dynamic method that we want to store. our Archive::Employee model will have a +calculated_worth+ attribute
-#     def calculated_worth
-#       1_000_000
-#     end
-# 
-#     # we have first_name & last_name attributes, our Archive::Employee model only has a +name+ attribute.
-#     def full_name
-#       "#{first_name} #{last_name}"
-#     end
-#   end
-# 
-#   # Some models based out of another database (or table)
-#   module Archive
-#     class Company
-#       has_many :employees
-#     end
-# 
-#     class Employee
-#       belongs_to :company
-#     end
-#   end
+= About
+
+Simple cloneable interface for ActiveRecord that allows you to call #clone! on a record and have it
+replicate itself to another object and save itsef. supports basic association cloneing by calling
+clone! on each association you specify using +options[:with]+
+
+This was created for a specific reason (archiving some records when the tables are flushed with current data), and hasn't really been 
+tested or built out to support a wide range of uses. This is in an early BETA state and hasn't been fully tested. 
+Validation and association failures will _not_ roll back the clone!, this can be a huge limitation currently. (Hopefully I can get this fixed in an upcoming release)
+
+Author:: Rob Hurring (rob at zerobased dot com)
+Date:: 01/12/2010
+Homepage:: http://blog.ubrio.us
+Copyright:: 2010 Zerobased, LLC
+License:: DWTFYWWI
+
+=== TODO
+
+* add transactions and rollback when associations/objects fail to save?
+* handle validation failures?
+
+=== Example
+  
+  # Your master records
+  class Company
+    has_many :employees, :dependent => :destroy
+    # Our Archive::Company has a +company_name+ attribute, while we are using a +name+ attribute. We also don't want to include
+    # our +bank_details+ in the archive.
+    cloneable :to => ::Archive::Company, :map => {:name => :company_name}, :exclude => [:bank_details], :with => :employees
+    
+    # After we remove a company, archive it along with all the employees
+    after_destroy :clone!
+  end
+
+  class Employee
+    belongs_to :company
+    cloneable :to => ::Archive::Employee, :include => [:calculated_worth], :map => {:full_name => :name}
+
+    # some dynamic method that we want to store. our Archive::Employee model will have a +calculated_worth+ attribute
+    def calculated_worth
+      1_000_000
+    end
+
+    # we have first_name & last_name attributes, our Archive::Employee model only has a +name+ attribute.
+    def full_name
+      "#{first_name} #{last_name}"
+    end
+  end
+
+  # Some models based out of another database (or table)
+  module Archive
+    class Company
+      has_many :employees
+    end
+
+    class Employee
+      belongs_to :company
+    end
+  end
